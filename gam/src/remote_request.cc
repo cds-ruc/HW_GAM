@@ -2,6 +2,7 @@
 
 
 #include <cstring>
+#include <cstdlib>
 #include <utility>
 #include <queue>
 #include "rdma.h"
@@ -255,7 +256,7 @@ void Worker::ProcessRequest(Client* client, WorkRequest* wr) {
         epicAssert(IsLocal(wr->addr));
         Size size = sb.sb_free(ToLocal(wr->addr));
         ghost_size -= size;
-        if (abs(ghost_size.load()) > conf->ghost_th)
+        if (ghost_size.load() > conf->ghost_th)
           SyncMaster();
         delete wr;
         wr = nullptr;
