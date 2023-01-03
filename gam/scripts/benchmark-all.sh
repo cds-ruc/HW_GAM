@@ -4,7 +4,7 @@ bin=`cd "$bin"; pwd`
 SRC_HOME=$bin/../test
 slaves=$bin/slaves
 log_file=$bin/log
-master_ip=ciidaa-a02
+master_ip=10.77.110.155
 master_port=1231
 
 run() {

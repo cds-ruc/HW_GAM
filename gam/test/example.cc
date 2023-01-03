@@ -111,9 +111,9 @@ int main() {
 //		}
 //	}
 //	if(i == size) {
-//		cout << "third read succeed!" << endl;
+//		cout << "thrid read succeed!" << endl;
 //	} else {
-//		cout << "third read failed!" << endl;
+//		cout << "thrid read failed!" << endl;
 //		exit(1);
 //	}
 //	allocator->UnLock(rptr, size);
