@@ -1,0 +1,9 @@
+//
+// Created by lianyu on 2023/1/6.
+//
+
+DEFINE_UNIQUE_ID(FunctionID)
+DEFINE_UNIQUE_ID(ActorClassID)
+DEFINE_UNIQUE_ID(WorkerID)
+DEFINE_UNIQUE_ID(ConfigID)
+DEFINE_UNIQUE_ID(NodeID)

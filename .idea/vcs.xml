@@ -2,6 +2,8 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/thrid/abseil-cpp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/thrid/msgpack-c" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/thrid/spdlog" vcs="Git" />
   </component>
 </project>
