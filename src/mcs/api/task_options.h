@@ -7,6 +7,7 @@
 #include <vector>
 #include <unordered_map>
 #include <cmath>
+#include <functional>
 
 #include "mcs_exception.h"
 

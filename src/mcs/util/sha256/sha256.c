@@ -14,8 +14,8 @@
 
 /*************************** HEADER FILES ***************************/
 #include "sha256.h"
-#include <memory>
-#include <cstdlib>
+#include <memory.h>
+#include <stdlib.h>
 
 // Suppress Undefined Behavior Sanitizer (recoverable only). Usage:
 // - __suppress_ubsan__("undefined")
