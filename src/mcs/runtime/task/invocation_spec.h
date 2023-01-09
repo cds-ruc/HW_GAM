@@ -21,7 +21,7 @@ namespace mcs {
       ActorID actor_id;
       int actor_counter;
       RemoteFunctionHolder remote_function_holder;
-      std::vector<std::unique_ptr<::mcs::TaskArg>> args;
+//      std::vector<std::unique_ptr<::mcs::TaskArg>> args;
     };
   }  // namespace internal
 }  // namespace mcs
