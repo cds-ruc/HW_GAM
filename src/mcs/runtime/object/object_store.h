@@ -6,10 +6,10 @@
 
 
 #include <memory>
-#include "thrid/msgpack-c/include/msgpack.hpp"
+#include "msgpack.hpp"
 
 //#include <mcs/api/wait_result.h>
-//#include "mcs/common/id.h"
+#include "mcs/common/id.h"
 
 namespace mcs {
   namespace internal {

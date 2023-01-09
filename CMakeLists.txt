@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 project(hw_gam)
 set(CMAKE_CXX_STANDARD 17)
-
 MESSAGE(STATUS "This is SOURCE dir " ${test_SOURCE_DIR})
 MESSAGE(STATUS "This is BINARY dir " ${test_BINARY_DIR})
 MESSAGE(STATUS "This is Project source dir " ${PROJECT_SOURCE_DIR})

@@ -13,10 +13,10 @@
 
 #include "mcs/core/config_internal.h"
 #include "mcs/util/process_helper.h"
-//#include "mcs/object/object_store.h"
-//#include "mcs/task/task_executor.h"
-//#include "mcs/task/task_submitter.h"
-//#include "mcs/common/id.h"
+#include "mcs/runtime/object/object_store.h"
+#include "mcs/runtime/task/task_executor.h"
+#include "mcs/runtime/task/task_submitter.h"
+#include "mcs/common/id.h"
 //#include "mcs/core_worker/context.h"
 //#include "mcs/core_worker/core_worker.h"
 
@@ -80,7 +80,7 @@ namespace mcs {
 //
 //      const TaskID &GetCurrentTaskId();
 //
-//      const JobID &GetCurrentJobID();
+      const JobID &GetCurrentJobID();
 //
 //      const ActorID &GetCurrentActorID();
 //
@@ -104,8 +104,8 @@ namespace mcs {
 //      std::string DeserializeAndRegisterActorHandle(
 //              const std::string &serialized_actor_handle);
 //
-//    protected:
-//      std::unique_ptr<TaskSubmitter> task_submitter_;
+    protected:
+      std::unique_ptr<TaskSubmitter> task_submitter_;
 //      std::unique_ptr<TaskExecutor> task_executor_;
 //      std::unique_ptr<ObjectStore> object_store_;
 //      std::unique_ptr<mcs::gcs::GlobalStateAccessor> global_state_accessor_;

@@ -9,8 +9,6 @@
 #include <algorithm>
 #include <chrono>
 #include <mutex>
-#include <random>
-
 #include "absl/time/clock.h"
 #include "constants.h"
 #include "status.h"
@@ -123,14 +121,15 @@ namespace mcs {
     // NOTE(swang): Include the current time in the hash for the actor ID so that
     // we avoid duplicating a previous actor ID, which is not allowed by the GCS.
     // See https://github.com/ray-project/ray/issues/10481.
-    auto data = GenerateUniqueBytes(job_id,
-                                    parent_task_id,
-                                    parent_task_counter,
-                                    absl::GetCurrentTimeNanos(),
-                                    ActorID::kUniqueBytesLength);
-    std::copy_n(job_id.Data(), JobID::kLength, std::back_inserter(data));
-    MCS_CHECK(data.size() == kLength);
-    return ActorID::FromBinary(data);
+//    auto data = GenerateUniqueBytes(job_id,
+//                                    parent_task_id,
+//                                    parent_task_counter,
+//                                    absl::GetCurrentTimeNanos(),
+//                                    ActorID::kUniqueBytesLength);
+//    std::copy_n(job_id.Data(), JobID::kLength, std::back_inserter(data));
+//    MCS_CHECK(data.size() == kLength);
+//    return ActorID::FromBinary(data);
+    return ActorID::FromBinary("");
   }
 
   ActorID ActorID::NilFromJob(const JobID &job_id) {
@@ -158,7 +157,7 @@ namespace mcs {
 
   TaskID TaskID::FromRandom(const JobID &job_id) {
     std::string data(kLength - JobID::kLength, 0);
-    FillRandom(&data);
+//    FillRandom(&data);
     std::copy_n(job_id.Data(), JobID::kLength, std::back_inserter(data));
     return TaskID::FromBinary(data);
   }
@@ -246,7 +245,7 @@ namespace mcs {
 
   ObjectID ObjectID::FromRandom() {
     std::vector<uint8_t> task_id_bytes(TaskID::kLength, 0x0);
-    FillRandom(&task_id_bytes);
+//    FillRandom(&task_id_bytes);
 
     return GenerateObjectId(std::string(
             reinterpret_cast<const char *>(task_id_bytes.data()), task_id_bytes.size()));
@@ -299,7 +298,7 @@ namespace mcs {
     // No need to set transport type for a random object id.
     // No need to assign put_index/return_index bytes.
     std::string data(PlacementGroupID::kUniqueBytesLength, 0);
-    FillRandom(&data);
+//    FillRandom(&data);
     std::copy_n(job_id.Data(), JobID::kLength, std::back_inserter(data));
     MCS_CHECK(data.size() == kLength);
     return PlacementGroupID::FromBinary(data);

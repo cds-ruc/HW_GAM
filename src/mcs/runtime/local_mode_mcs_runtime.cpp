@@ -8,12 +8,12 @@
 
 //#include <mcs/object/local_mode_object_store.h>
 //#include <mcs/object/object_store.h>
-//#include <mcs/task/local_mode_task_submitter.h>
+#include <mcs/runtime/task/local_mode_task_submitter.h>
 
 namespace mcs {
   namespace internal {
     LocalModeMcsRuntime::LocalModeMcsRuntime(){
-
+      task_submitter_ = std::unique_ptr<TaskSubmitter>(new LocalModeTaskSubmitter(*this));
     }
 //    LocalModeMcsRuntime::LocalModeMcsRuntime()
 //            : worker_(mcs::core::WorkerType::DRIVER,

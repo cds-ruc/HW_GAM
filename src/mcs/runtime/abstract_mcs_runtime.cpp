@@ -17,6 +17,7 @@
 //#include "native_mcs_runtime.h"
 
 #include "mcs/runtime/task/invocation_spec.h"
+#include "mcs/common/buffer.h"
 
 namespace mcs {
 
@@ -110,28 +111,28 @@ namespace mcs {
 //                                               int timeout_ms) {
 //      return object_store_->Wait(StringIDsToObjectIDs(ids), num_objects, timeout_ms);
 //    }
-//
-//    std::vector<std::unique_ptr<::mcs::TaskArg>> TransformArgs(
-//            std::vector<mcs::internal::TaskArg> &args, bool cross_lang) {
-//      std::vector<std::unique_ptr<::mcs::TaskArg>> mcs_args;
-//      for (auto &arg : args) {
-//        std::unique_ptr<::mcs::TaskArg> mcs_arg = nullptr;
-//        if (arg.buf) {
-//          auto &buffer = *arg.buf;
-//          auto memory_buffer = std::make_shared<mcs::LocalMemoryBuffer>(
-//                  reinterpret_cast<uint8_t *>(buffer.data()), buffer.size(), true);
-//          std::shared_ptr<Buffer> metadata = nullptr;
-//          if (cross_lang) {
-//            auto meta_str = arg.meta_str;
-//            metadata = std::make_shared<mcs::LocalMemoryBuffer>(
-//                    reinterpret_cast<uint8_t *>(const_cast<char *>(meta_str.data())),
-//                    meta_str.size(),
-//                    true);
-//          }
-//          mcs_arg = absl::make_unique<mcs::TaskArgByValue>(std::make_shared<mcs::McsObject>(
-//                  memory_buffer, metadata, std::vector<rpc::ObjectReference>()));
-//        } else {
-//          MCS_CHECK(arg.id);
+
+    std::vector<std::unique_ptr<::mcs::TaskArg>> TransformArgs(
+            std::vector<mcs::internal::TaskArg> &args, bool cross_lang) {
+      std::vector<std::unique_ptr<::mcs::TaskArg>> mcs_args;
+      for (auto &arg : args) {
+        std::unique_ptr<::mcs::TaskArg> mcs_arg = nullptr;
+        if (arg.buf) {
+          auto &buffer = *arg.buf;
+          auto memory_buffer = std::make_shared<mcs::LocalMemoryBuffer>(
+                  reinterpret_cast<uint8_t *>(buffer.data()), buffer.size(), true);
+          std::shared_ptr<Buffer> metadata = nullptr;
+          if (cross_lang) {
+            auto meta_str = arg.meta_str;
+            metadata = std::make_shared<mcs::LocalMemoryBuffer>(
+                    reinterpret_cast<uint8_t *>(const_cast<char *>(meta_str.data())),
+                    meta_str.size(),
+                    true);
+          }
+          mcs_arg = absl::make_unique<mcs::TaskArgByValue>(std::make_shared<mcs::McsObject>(
+                  memory_buffer, metadata, std::vector<rpc::ObjectReference>()));
+        } else {
+          MCS_CHECK(arg.id);
 //          auto id = ObjectID::FromBinary(*arg.id);
 //          auto owner_address = mcs::rpc::Address{};
 //          if (ConfigInternal::Instance().run_mode == RunMode::CLUSTER) {
@@ -141,12 +142,12 @@ namespace mcs {
 //          mcs_arg = absl::make_unique<mcs::TaskArgByReference>(id,
 //                                                               owner_address,
 //                  /*call_site=*/"");
-//        }
-//        mcs_args.push_back(std::move(mcs_arg));
-//      }
-//
-//      return mcs_args;
-//    }
+        }
+        mcs_args.push_back(std::move(mcs_arg));
+      }
+
+      return mcs_args;
+    }
 
     InvocationSpec BuildInvocationSpec1(TaskType task_type,
                                         const RemoteFunctionHolder &remote_function_holder,
@@ -156,8 +157,8 @@ namespace mcs {
       invocation_spec.task_type = task_type;
       invocation_spec.remote_function_holder = remote_function_holder;
       invocation_spec.actor_id = actor;
-//      invocation_spec.args =
-//              TransformArgs(args, remote_function_holder.lang_type != LangType::CPP);
+      invocation_spec.args =
+              TransformArgs(args, remote_function_holder.lang_type != LangType::CPP);
       return invocation_spec;
     }
 
@@ -166,8 +167,8 @@ namespace mcs {
                                          const CallOptions &task_options) {
       auto invocation_spec = BuildInvocationSpec1(
               TaskType::NORMAL_TASK, remote_function_holder, args, ActorID::Nil());
-//      return task_submitter_->SubmitTask(invocation_spec, task_options).Binary();
-      return "";
+      printf("生成任务信息\n");
+      return task_submitter_->SubmitTask(invocation_spec, task_options).Binary();
     }
 //
 //    std::string AbstractMcsRuntime::CreateActor(
@@ -216,9 +217,9 @@ namespace mcs {
 //      return GetWorkerContext().GetCurrentTaskID();
 //    }
 //
-//    const JobID &AbstractMcsRuntime::GetCurrentJobID() {
+    const JobID &AbstractMcsRuntime::GetCurrentJobID() {
 //      return GetWorkerContext().GetCurrentJobID();
-//    }
+    }
 //
 //    const ActorID &AbstractMcsRuntime::GetCurrentActorID() {
 //      return GetWorkerContext().GetCurrentActorID();

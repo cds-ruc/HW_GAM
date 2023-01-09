@@ -4,19 +4,19 @@
 
 #pragma once
 
-//#include "ray/common/buffer.h"
-//#include "ray/common/ray_object.h"
-//#include "ray/common/task/task_spec.h"
-//#include "src/ray/protobuf/common.pb.h"
+#include "mcs/common/buffer.h"
+#include "mcs/common/mcs_object.h"
+//#include "mcs/common/task/task_spec.h"
+//#include "src/mcs/protobuf/common.pb.h"
 
-namespace ray {
+namespace mcs {
 
 /// Stores the task failure reason and when this entry was created.
 //  struct TaskFailureEntry {
-//    rpc::RayErrorInfo ray_error_info;
+//    rpc::RayErrorInfo mcs_error_info;
 //    std::chrono::steady_clock::time_point creation_time;
-//    TaskFailureEntry(const rpc::RayErrorInfo &ray_error_info)
-//            : ray_error_info(ray_error_info), creation_time(std::chrono::steady_clock::now()) {}
+//    TaskFailureEntry(const rpc::RayErrorInfo &mcs_error_info)
+//            : mcs_error_info(mcs_error_info), creation_time(std::chrono::steady_clock::now()) {}
 //  };
 
 /// Argument of a task.
@@ -51,17 +51,17 @@ namespace ray {
 //    const std::string call_site_;
 //  };
 //
-//  class TaskArgByValue : public TaskArg {
-//  public:
-//    /// Create a pass-by-value task argument.
-//    ///
-//    /// \param[in] value Value of the argument.
-//    /// \return The task argument.
-//    explicit TaskArgByValue(const std::shared_ptr<RayObject> &value) : value_(value) {
-//      RAY_CHECK(value) << "Value can't be null.";
-//    }
-//
-//    void ToProto(rpc::TaskArg *arg_proto) const {
+  class TaskArgByValue : public TaskArg {
+  public:
+    /// Create a pass-by-value task argument.
+    ///
+    /// \param[in] value Value of the argument.
+    /// \return The task argument.
+    explicit TaskArgByValue(const std::shared_ptr<McsObject> &value) : value_(value) {
+      MCS_CHECK(value) << "Value can't be null.";
+    }
+
+    void ToProto(rpc::TaskArg *arg_proto) const {
 //      if (value_->HasData()) {
 //        const auto &data = value_->GetData();
 //        arg_proto->set_data(data->Data(), data->Size());
@@ -73,12 +73,12 @@ namespace ray {
 //      for (const auto &nested_ref : value_->GetNestedRefs()) {
 //        arg_proto->add_nested_inlined_refs()->CopyFrom(nested_ref);
 //      }
-//    }
-//
-//  private:
-//    /// Value of the argument.
-//    const std::shared_ptr<RayObject> value_;
-//  };
+    }
+
+  private:
+    /// Value of the argument.
+    const std::shared_ptr<McsObject> value_;
+  };
 
 /// Helper class for building a `TaskSpecification` object.
 //  class TaskSpecBuilder {
@@ -99,7 +99,7 @@ namespace ray {
 //            const TaskID &task_id,
 //            const std::string name,
 //            const Language &language,
-//            const ray::FunctionDescriptor &function_descriptor,
+//            const mcs::FunctionDescriptor &function_descriptor,
 //            const JobID &job_id,
 //            const TaskID &parent_task_id,
 //            uint64_t parent_counter,
@@ -194,7 +194,7 @@ namespace ray {
 //            int max_concurrency = 1,
 //            bool is_detached = false,
 //            std::string name = "",
-//            std::string ray_namespace = "",
+//            std::string mcs_namespace = "",
 //            bool is_asyncio = false,
 //            const std::vector<ConcurrencyGroup> &concurrency_groups = {},
 //            const std::string &extension_data = "",
@@ -210,7 +210,7 @@ namespace ray {
 //      actor_creation_spec->set_max_concurrency(max_concurrency);
 //      actor_creation_spec->set_is_detached(is_detached);
 //      actor_creation_spec->set_name(name);
-//      actor_creation_spec->set_ray_namespace(ray_namespace);
+//      actor_creation_spec->set_mcs_namespace(mcs_namespace);
 //      actor_creation_spec->set_is_asyncio(is_asyncio);
 //      actor_creation_spec->set_extension_data(extension_data);
 //      actor_creation_spec->set_serialized_actor_handle(serialized_actor_handle);
@@ -252,4 +252,4 @@ namespace ray {
 //    std::shared_ptr<rpc::TaskSpec> message_;
 //  };
 
-}  // namespace ray
+}  // namespace mcs
