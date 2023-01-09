@@ -1,7 +1,7 @@
 //
 // Created by hrh on 1/4/23.
 //
-#include "stdio.h"
+#include <iostream>
 #include "mcs/api.h"
 
 int plus(int a, int b) {
@@ -11,6 +11,8 @@ MCS_REMOTE(plus);
 
 int main() {
   mcs::Init();
-
+  auto task_object = mcs::Task(plus).Remote(1, 2);
+//  int task_result = *(ray::Get(task_object));
+//  std::cout << "task_result = " << task_result << std::endl;
   return 0;
 }

@@ -17,7 +17,9 @@
 #include "mcs/util/macros.h"
 #include "mcs/util/util.h"
 
-//#include "sha256.h"
+extern "C" {
+#include "mcs/util/sha256/sha256.h"
+}
 
 // Definitions for computing hash digests.
 #define DIGEST_SIZE SHA256_BLOCK_SIZE
@@ -33,20 +35,19 @@ namespace mcs {
                       size_t parent_task_counter,
                       size_t extra_bytes,
                       size_t length) {
-//    MCS_CHECK(length <= DIGEST_SIZE);
-//    SHA256_CTX ctx;
-//    sha256_init(&ctx);
-//    sha256_update(&ctx, reinterpret_cast<const BYTE *>(job_id.Data()), job_id.Size());
-//    sha256_update(
-//            &ctx, reinterpret_cast<const BYTE *>(parent_task_id.Data()), parent_task_id.Size());
-//    sha256_update(&ctx, (const BYTE *)&parent_task_counter, sizeof(parent_task_counter));
-//    if (extra_bytes > 0) {
-//      sha256_update(&ctx, (const BYTE *)&extra_bytes, sizeof(extra_bytes));
-//    }
-//
-//    BYTE buff[DIGEST_SIZE];
-//    sha256_final(&ctx, buff);
-    char buff[256];
+    MCS_CHECK(length <= DIGEST_SIZE);
+    SHA256_CTX ctx;
+    sha256_init(&ctx);
+    sha256_update(&ctx, reinterpret_cast<const BYTE *>(job_id.Data()), job_id.Size());
+    sha256_update(
+            &ctx, reinterpret_cast<const BYTE *>(parent_task_id.Data()), parent_task_id.Size());
+    sha256_update(&ctx, (const BYTE *)&parent_task_counter, sizeof(parent_task_counter));
+    if (extra_bytes > 0) {
+      sha256_update(&ctx, (const BYTE *)&extra_bytes, sizeof(extra_bytes));
+    }
+
+    BYTE buff[DIGEST_SIZE];
+    sha256_final(&ctx, buff);
     return std::string(buff, buff + length);
   }
 
