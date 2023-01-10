@@ -4,12 +4,7 @@ set(CMAKE_CXX_STANDARD 17)
 # 如果想要生成的可执行文件拥有符号表，可以gdb调试，就直接加上这句
 add_definitions("-Wall -g")
 
-#FIND_PACKAGE(Boost)
-#IF (Boost_FOUND)
-#    INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
-#    ADD_DEFINITIONS( "-DHAS_BOOST" )
-#ENDIF()
-
+find_package(Boost REQUIRED)
 find_package(Protobuf REQUIRED)
 find_package(gRPC REQUIRED)
 
@@ -23,9 +18,9 @@ set(INC ${PROJECT_SOURCE_DIR})
 include_directories(${INC}
         ${MSGPACK_DIR}
         ${SPDLOG_DIR}
-        /usr/local/include SYSTEM
+        /usr/local/include  /user/include SYSTEM
         )
-link_directories(/usr/local/lib)
+link_directories(/usr/local/lib /usr/lib)
 
 FILE(GLOB_RECURSE ALL_SRC *.cpp *.c *.cc)
 FILE(GLOB MAIN_SRC main.cpp)

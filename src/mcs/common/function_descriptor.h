@@ -7,7 +7,7 @@
 #include <string>
 
 #include "mcs/util/grpc_util.h"
-//#include "mcs/protobuf/common.pb.h"
+#include "mcs/protobuf/common.pb.h"
 
 namespace mcs {
 /// See `common.proto` for definition of `FunctionDescriptor` oneof type.
