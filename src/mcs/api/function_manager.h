@@ -9,6 +9,7 @@
 #include "serializer.h"
 #include "common_types.h"
 #include "type_traits.h"
+#include "mcs_runtime_holder.h"
 
 namespace mcs {
   namespace internal {
@@ -16,11 +17,11 @@ namespace mcs {
     template <typename T>
     inline static std::enable_if_t<!std::is_pointer<T>::value, msgpack::sbuffer>
     PackReturnValue(T result) {
-//      if constexpr (is_actor_handle_v<T>) {
-//        auto serialized_actor_handle =
-//                McsRuntimeHolder::Instance().Runtime()->SerializeActorHandle(result.ID());
-//        return Serializer::Serialize(serialized_actor_handle);
-//      }
+      if constexpr (is_actor_handle_v<T>) {
+        auto serialized_actor_handle =
+                McsRuntimeHolder::Instance().Runtime()->SerializeActorHandle(result.ID());
+        return Serializer::Serialize(serialized_actor_handle);
+      }
       return Serializer::Serialize(std::move(result));
     }
 

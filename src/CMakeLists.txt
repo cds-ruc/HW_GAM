@@ -36,8 +36,8 @@ FOREACH (F ${ALL_SRC})
 ENDFOREACH (F)
 
 set(LIBRARIES dl nlohmann_json::nlohmann_json)
-set(BOOST boost_filesystem boost_system)
-set(ABSL absl::base absl::synchronization absl::strings absl::random_random absl::time)
+set(BOOST boost_filesystem boost_system boost_thread)
+set(ABSL absl::base absl::synchronization absl::strings absl::flat_hash_map absl::flat_hash_set absl::random_random absl::time)
 set(GRPC gRPC::grpc++_reflection protobuf::libprotobuf)
 
 # 生成可执行文件

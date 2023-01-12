@@ -15,46 +15,45 @@ namespace mcs {
   namespace internal {
 
     LocalModeTaskSubmitter::LocalModeTaskSubmitter(
-            LocalModeMcsRuntime &local_mode_mcs_tuntime)
-            : local_mode_mcs_tuntime_(local_mode_mcs_tuntime) {
+            LocalModeMcsRuntime &local_mode_mcs_runtime)
+            : local_mode_mcs_runtime_(local_mode_mcs_runtime) {
       thread_pool_.reset(new boost::asio::thread_pool(10));
     }
 
     ObjectID LocalModeTaskSubmitter::Submit(InvocationSpec &invocation,
                                             const ActorCreationOptions &options) {
 
-      printf("准备执行 func\n");
-//      auto functionDescriptor = FunctionDescriptorBuilder::BuildCpp(
-//              invocation.remote_function_holder.function_name);
-//      rpc::Address address;
-//      std::unordered_map<std::string, double> required_resources;
-//      std::unordered_map<std::string, double> required_placement_resources;
-//      std::string task_id_data(TaskID::Size(), 0);
-//      FillRandom(&task_id_data);
-//      auto task_id = TaskID::FromBinary(task_id_data);
-//      TaskSpecBuilder builder;
-//      std::string task_name =
-//              invocation.name.empty() ? functionDescriptor->DefaultTaskName() : invocation.name;
-//
-//      // TODO (Alex): Properly set the depth here?
-//      builder.SetCommonTaskSpec(task_id,
-//                                task_name,
-//                                rpc::Language::CPP,
-//                                functionDescriptor,
-//                                local_mode_mcs_tuntime_.GetCurrentJobID(),
-//                                local_mode_mcs_tuntime_.GetCurrentTaskId(),
-//                                0,
-//                                local_mode_mcs_tuntime_.GetCurrentTaskId(),
-//                                address,
-//                                1,
-//              /*returns_dynamic=*/false,
-//                                required_resources,
-//                                required_placement_resources,
-//                                "",
-//              /*depth=*/0);
+      auto functionDescriptor = FunctionDescriptorBuilder::BuildCpp(
+              invocation.remote_function_holder.function_name);
+      rpc::Address address;
+      std::unordered_map<std::string, double> required_resources;
+      std::unordered_map<std::string, double> required_placement_resources;
+      std::string task_id_data(TaskID::Size(), 0);
+      FillRandom(&task_id_data);
+      auto task_id = TaskID::FromBinary(task_id_data);
+      TaskSpecBuilder builder;
+      std::string task_name =
+              invocation.name.empty() ? functionDescriptor->DefaultTaskName() : invocation.name;
+      // TODO (Alex): Properly set the depth here?
+      builder.SetCommonTaskSpec(task_id,
+                                task_name,
+                                rpc::Language::CPP,
+                                functionDescriptor,
+                                local_mode_mcs_runtime_.GetCurrentJobID(),
+                                local_mode_mcs_runtime_.GetCurrentTaskId(),
+                                0,
+                                local_mode_mcs_runtime_.GetCurrentTaskId(),
+                                address,
+                                1,
+              /*returns_dynamic=*/false,
+                                required_resources,
+                                required_placement_resources,
+                                "",
+              /*depth=*/0);
+
 //      if (invocation.task_type == TaskType::NORMAL_TASK) {
 //      } else if (invocation.task_type == TaskType::ACTOR_CREATION_TASK) {
-//        invocation.actor_id = local_mode_mcs_tuntime_.GetNextActorID();
+//        invocation.actor_id = local_mode_mcs_runtime_.GetNextActorID();
 //        rpc::SchedulingStrategy scheduling_strategy;
 //        scheduling_strategy.mutable_default_scheduling_strategy();
 //        builder.SetActorCreationTaskSpec(invocation.actor_id,
@@ -76,47 +75,44 @@ namespace mcs {
 //      } else {
 //        throw McsException("unknown task type");
 //      }
-//      for (size_t i = 0; i < invocation.args.size(); i++) {
-//        builder.AddArg(*invocation.args[i]);
-//      }
-//      auto task_specification = builder.Build();
-//      ObjectID return_object_id = task_specification.ReturnId(0);
-//
-//      std::shared_ptr<msgpack::sbuffer> actor;
-//      std::shared_ptr<absl::Mutex> mutex;
+      for (size_t i = 0; i < invocation.args.size(); i++) {
+        builder.AddArg(*invocation.args[i]);
+      }
+      auto task_specification = builder.Build();
+      ObjectID return_object_id = task_specification.ReturnId(0);
+      std::shared_ptr<msgpack::sbuffer> actor;
+      std::shared_ptr<absl::Mutex> mutex;
 //      if (invocation.task_type == TaskType::ACTOR_TASK) {
 //        absl::MutexLock lock(&actor_contexts_mutex_);
 //        actor = actor_contexts_.at(invocation.actor_id).get()->current_actor;
 //        mutex = actor_contexts_.at(invocation.actor_id).get()->actor_mutex;
 //      }
-      AbstractMcsRuntime *runtime = &local_mode_mcs_tuntime_;
-//      if (invocation.task_type == TaskType::ACTOR_CREATION_TASK ||
-//          invocation.task_type == TaskType::ACTOR_TASK) {
-//        /// TODO(SongGuyang): Handle task dependencies.
-//        /// Execute actor task directly in the main thread because we must guarantee the actor
-//        /// task executed by calling order.
-//        TaskExecutor::Invoke(
-//                task_specification, actor, runtime, actor_contexts_, actor_contexts_mutex_);
-//      } else {
-//        boost::asio::post(
-//                *thread_pool_.get(),
-//                std::bind(
-//                        [actor, mutex, runtime, this](TaskSpecification &ts) {
-//                          if (mutex) {
-//                            absl::MutexLock lock(mutex.get());
-//                          }
-//                          TaskExecutor::Invoke(
-//                                  ts, actor, runtime, this->actor_contexts_, this->actor_contexts_mutex_);
-//                        },
-//                        std::move(task_specification)));
-//      }
-//      return return_object_id;
-      return ObjectID();
+      AbstractMcsRuntime *runtime = &local_mode_mcs_runtime_;
+      if (invocation.task_type == TaskType::ACTOR_CREATION_TASK ||
+          invocation.task_type == TaskType::ACTOR_TASK) {
+        /// TODO(SongGuyang): Handle task dependencies.
+        /// Execute actor task directly in the main thread because we must guarantee the actor
+        /// task executed by calling order.
+        TaskExecutor::Invoke(
+                task_specification, actor, runtime, actor_contexts_, actor_contexts_mutex_);
+      } else {
+        boost::asio::post(
+                *thread_pool_.get(),
+                std::bind(
+                        [actor, mutex, runtime, this](TaskSpecification &ts) {
+                          if (mutex) {
+                            absl::MutexLock lock(mutex.get());
+                          }
+                          TaskExecutor::Invoke(
+                                  ts, actor, runtime, this->actor_contexts_, this->actor_contexts_mutex_);
+                        },
+                        std::move(task_specification)));
+      }
+      return return_object_id;
     }
 
     ObjectID LocalModeTaskSubmitter::SubmitTask(InvocationSpec &invocation,
                                                 const CallOptions &call_options) {
-      printf("准备提交任务\n");
       return Submit(invocation, {});
     }
 
@@ -150,7 +146,7 @@ namespace mcs {
     mcs::PlacementGroup LocalModeTaskSubmitter::CreatePlacementGroup(
             const mcs::PlacementGroupCreationOptions &create_options) {
       mcs::PlacementGroup placement_group{
-              PlacementGroupID::Of(local_mode_mcs_tuntime_.GetCurrentJobID()).Binary(),
+              PlacementGroupID::Of(local_mode_mcs_runtime_.GetCurrentJobID()).Binary(),
               create_options};
       placement_group.SetWaitCallbak([this](const std::string &id, int64_t timeout_seconds) {
         return WaitPlacementGroupReady(id, timeout_seconds);

@@ -6,18 +6,18 @@
 
 #include "mcs/common/buffer.h"
 #include "mcs/common/mcs_object.h"
-//#include "mcs/common/task/task_spec.h"
+#include "mcs/runtime/task/task_spec.h"
 #include "mcs/protobuf/common.pb.h"
 
 namespace mcs {
 
-/// Stores the task failure reason and when this entry was created.
-//  struct TaskFailureEntry {
-//    rpc::RayErrorInfo mcs_error_info;
-//    std::chrono::steady_clock::time_point creation_time;
-//    TaskFailureEntry(const rpc::RayErrorInfo &mcs_error_info)
-//            : mcs_error_info(mcs_error_info), creation_time(std::chrono::steady_clock::now()) {}
-//  };
+// Stores the task failure reason and when this entry was created.
+  struct TaskFailureEntry {
+    rpc::McsErrorInfo mcs_error_info;
+    std::chrono::steady_clock::time_point creation_time;
+    TaskFailureEntry(const rpc::McsErrorInfo &mcs_error_info)
+            : mcs_error_info(mcs_error_info), creation_time(std::chrono::steady_clock::now()) {}
+  };
 
 /// Argument of a task.
   class TaskArg {

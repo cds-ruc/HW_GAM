@@ -85,130 +85,130 @@ namespace mcs {
     virtual std::string CallString() const { return ""; }
   };
 
-//  class JavaFunctionDescriptor : public FunctionDescriptorInterface {
-//  public:
-//    /// Construct from a protobuf message object.
-//    /// The input message will be **copied** into this object.
-//    ///
-//    /// \param message The protobuf message.
-//    explicit JavaFunctionDescriptor(rpc::FunctionDescriptor message)
-//            : FunctionDescriptorInterface(std::move(message)) {
-//      MCS_CHECK(message_->function_descriptor_case() ==
-//                mcs::FunctionDescriptorType::kJavaFunctionDescriptor);
-//      typed_message_ = &(message_->java_function_descriptor());
-//    }
-//
-//    virtual size_t Hash() const {
-//      return std::hash<int>()(mcs::FunctionDescriptorType::kJavaFunctionDescriptor) ^
-//             std::hash<std::string>()(typed_message_->class_name()) ^
-//             std::hash<std::string>()(typed_message_->function_name()) ^
-//             std::hash<std::string>()(typed_message_->signature());
-//    }
-//
-//    inline bool operator==(const JavaFunctionDescriptor &other) const {
-//      if (this == &other) {
-//        return true;
-//      }
-//      return this->ClassName() == other.ClassName() &&
-//             this->FunctionName() == other.FunctionName() &&
-//             this->Signature() == other.Signature();
-//    }
-//
-//    inline bool operator!=(const JavaFunctionDescriptor &other) const {
-//      return !(*this == other);
-//    }
-//
-//    virtual std::string ToString() const {
-//      return "{type=JavaFunctionDescriptor, class_name=" + typed_message_->class_name() +
-//             ", function_name=" + typed_message_->function_name() +
-//             ", signature=" + typed_message_->signature() + "}";
-//    }
-//
-//    virtual std::string CallString() const {
-//      const std::string &class_name = typed_message_->class_name();
-//      const std::string &function_name = typed_message_->function_name();
-//      return class_name.empty() ? function_name : class_name + "." + function_name;
-//    }
-//
-//    virtual std::string ClassName() const { return typed_message_->class_name(); }
-//
-//    const std::string &FunctionName() const { return typed_message_->function_name(); }
-//
-//    const std::string &Signature() const { return typed_message_->signature(); }
-//
-//  private:
-//    const rpc::JavaFunctionDescriptor *typed_message_;
-//  };
-//
-//  class PythonFunctionDescriptor : public FunctionDescriptorInterface {
-//  public:
-//    /// Construct from a protobuf message object.
-//    /// The input message will be **copied** into this object.
-//    ///
-//    /// \param message The protobuf message.
-//    explicit PythonFunctionDescriptor(rpc::FunctionDescriptor message)
-//            : FunctionDescriptorInterface(std::move(message)) {
-//      MCS_CHECK(message_->function_descriptor_case() ==
-//                mcs::FunctionDescriptorType::kPythonFunctionDescriptor);
-//      typed_message_ = &(message_->python_function_descriptor());
-//    }
-//
-//    virtual size_t Hash() const {
-//      return std::hash<int>()(mcs::FunctionDescriptorType::kPythonFunctionDescriptor) ^
-//             std::hash<std::string>()(typed_message_->module_name()) ^
-//             std::hash<std::string>()(typed_message_->class_name()) ^
-//             std::hash<std::string>()(typed_message_->function_name()) ^
-//             std::hash<std::string>()(typed_message_->function_hash());
-//    }
-//
-//    inline bool operator==(const PythonFunctionDescriptor &other) const {
-//      if (this == &other) {
-//        return true;
-//      }
-//      return this->ModuleName() == other.ModuleName() &&
-//             this->ClassName() == other.ClassName() &&
-//             this->FunctionName() == other.FunctionName() &&
-//             this->FunctionHash() == other.FunctionHash();
-//    }
-//
-//    inline bool operator!=(const PythonFunctionDescriptor &other) const {
-//      return !(*this == other);
-//    }
-//
-//    virtual std::string ToString() const {
-//      return "{type=PythonFunctionDescriptor, module_name=" +
-//             typed_message_->module_name() +
-//             ", class_name=" + typed_message_->class_name() +
-//             ", function_name=" + typed_message_->function_name() +
-//             ", function_hash=" + typed_message_->function_hash() + "}";
-//    }
-//
-//    virtual std::string CallSiteString() const {
-//      return typed_message_->module_name() + "." + CallString();
-//    }
-//
-//    virtual std::string CallString() const {
-//      const std::string &class_name = typed_message_->class_name();
-//      const std::string &function_name = typed_message_->function_name();
-//      if (class_name.empty()) {
-//        return function_name.substr(function_name.find_last_of(".") + 1);
-//      } else {
-//        return class_name.substr(class_name.find_last_of(".") + 1) + "." +
-//               function_name.substr(function_name.find_last_of(".") + 1);
-//      }
-//    }
-//
-//    virtual std::string ClassName() const { return typed_message_->class_name(); }
-//
-//    const std::string &ModuleName() const { return typed_message_->module_name(); }
-//
-//    const std::string &FunctionName() const { return typed_message_->function_name(); }
-//
-//    const std::string &FunctionHash() const { return typed_message_->function_hash(); }
-//
-//  private:
-//    const rpc::PythonFunctionDescriptor *typed_message_;
-//  };
+  class JavaFunctionDescriptor : public FunctionDescriptorInterface {
+  public:
+    /// Construct from a protobuf message object.
+    /// The input message will be **copied** into this object.
+    ///
+    /// \param message The protobuf message.
+    explicit JavaFunctionDescriptor(rpc::FunctionDescriptor message)
+            : FunctionDescriptorInterface(std::move(message)) {
+      MCS_CHECK(message_->function_descriptor_case() ==
+                mcs::FunctionDescriptorType::kJavaFunctionDescriptor);
+      typed_message_ = &(message_->java_function_descriptor());
+    }
+
+    virtual size_t Hash() const {
+      return std::hash<int>()(mcs::FunctionDescriptorType::kJavaFunctionDescriptor) ^
+             std::hash<std::string>()(typed_message_->class_name()) ^
+             std::hash<std::string>()(typed_message_->function_name()) ^
+             std::hash<std::string>()(typed_message_->signature());
+    }
+
+    inline bool operator==(const JavaFunctionDescriptor &other) const {
+      if (this == &other) {
+        return true;
+      }
+      return this->ClassName() == other.ClassName() &&
+             this->FunctionName() == other.FunctionName() &&
+             this->Signature() == other.Signature();
+    }
+
+    inline bool operator!=(const JavaFunctionDescriptor &other) const {
+      return !(*this == other);
+    }
+
+    virtual std::string ToString() const {
+      return "{type=JavaFunctionDescriptor, class_name=" + typed_message_->class_name() +
+             ", function_name=" + typed_message_->function_name() +
+             ", signature=" + typed_message_->signature() + "}";
+    }
+
+    virtual std::string CallString() const {
+      const std::string &class_name = typed_message_->class_name();
+      const std::string &function_name = typed_message_->function_name();
+      return class_name.empty() ? function_name : class_name + "." + function_name;
+    }
+
+    virtual std::string ClassName() const { return typed_message_->class_name(); }
+
+    const std::string &FunctionName() const { return typed_message_->function_name(); }
+
+    const std::string &Signature() const { return typed_message_->signature(); }
+
+  private:
+    const rpc::JavaFunctionDescriptor *typed_message_;
+  };
+
+  class PythonFunctionDescriptor : public FunctionDescriptorInterface {
+  public:
+    /// Construct from a protobuf message object.
+    /// The input message will be **copied** into this object.
+    ///
+    /// \param message The protobuf message.
+    explicit PythonFunctionDescriptor(rpc::FunctionDescriptor message)
+            : FunctionDescriptorInterface(std::move(message)) {
+      MCS_CHECK(message_->function_descriptor_case() ==
+                mcs::FunctionDescriptorType::kPythonFunctionDescriptor);
+      typed_message_ = &(message_->python_function_descriptor());
+    }
+
+    virtual size_t Hash() const {
+      return std::hash<int>()(mcs::FunctionDescriptorType::kPythonFunctionDescriptor) ^
+             std::hash<std::string>()(typed_message_->module_name()) ^
+             std::hash<std::string>()(typed_message_->class_name()) ^
+             std::hash<std::string>()(typed_message_->function_name()) ^
+             std::hash<std::string>()(typed_message_->function_hash());
+    }
+
+    inline bool operator==(const PythonFunctionDescriptor &other) const {
+      if (this == &other) {
+        return true;
+      }
+      return this->ModuleName() == other.ModuleName() &&
+             this->ClassName() == other.ClassName() &&
+             this->FunctionName() == other.FunctionName() &&
+             this->FunctionHash() == other.FunctionHash();
+    }
+
+    inline bool operator!=(const PythonFunctionDescriptor &other) const {
+      return !(*this == other);
+    }
+
+    virtual std::string ToString() const {
+      return "{type=PythonFunctionDescriptor, module_name=" +
+             typed_message_->module_name() +
+             ", class_name=" + typed_message_->class_name() +
+             ", function_name=" + typed_message_->function_name() +
+             ", function_hash=" + typed_message_->function_hash() + "}";
+    }
+
+    virtual std::string CallSiteString() const {
+      return typed_message_->module_name() + "." + CallString();
+    }
+
+    virtual std::string CallString() const {
+      const std::string &class_name = typed_message_->class_name();
+      const std::string &function_name = typed_message_->function_name();
+      if (class_name.empty()) {
+        return function_name.substr(function_name.find_last_of(".") + 1);
+      } else {
+        return class_name.substr(class_name.find_last_of(".") + 1) + "." +
+               function_name.substr(function_name.find_last_of(".") + 1);
+      }
+    }
+
+    virtual std::string ClassName() const { return typed_message_->class_name(); }
+
+    const std::string &ModuleName() const { return typed_message_->module_name(); }
+
+    const std::string &FunctionName() const { return typed_message_->function_name(); }
+
+    const std::string &FunctionHash() const { return typed_message_->function_hash(); }
+
+  private:
+    const rpc::PythonFunctionDescriptor *typed_message_;
+  };
 
   class CppFunctionDescriptor : public FunctionDescriptorInterface {
   public:
@@ -277,12 +277,12 @@ namespace mcs {
       case mcs::FunctionDescriptorType::FUNCTION_DESCRIPTOR_NOT_SET:
         return static_cast<const EmptyFunctionDescriptor &>(*left) ==
                static_cast<const EmptyFunctionDescriptor &>(*right);
-//      case mcs::FunctionDescriptorType::kJavaFunctionDescriptor:
-//        return static_cast<const JavaFunctionDescriptor &>(*left) ==
-//               static_cast<const JavaFunctionDescriptor &>(*right);
-//      case mcs::FunctionDescriptorType::kPythonFunctionDescriptor:
-//        return static_cast<const PythonFunctionDescriptor &>(*left) ==
-//               static_cast<const PythonFunctionDescriptor &>(*right);
+      case mcs::FunctionDescriptorType::kJavaFunctionDescriptor:
+        return static_cast<const JavaFunctionDescriptor &>(*left) ==
+               static_cast<const JavaFunctionDescriptor &>(*right);
+      case mcs::FunctionDescriptorType::kPythonFunctionDescriptor:
+        return static_cast<const PythonFunctionDescriptor &>(*left) ==
+               static_cast<const PythonFunctionDescriptor &>(*right);
       case mcs::FunctionDescriptorType::kCppFunctionDescriptor:
         return static_cast<const CppFunctionDescriptor &>(*left) ==
                static_cast<const CppFunctionDescriptor &>(*right);

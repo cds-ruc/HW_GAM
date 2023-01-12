@@ -19,7 +19,7 @@ namespace mcs {
 
     class LocalModeTaskSubmitter : public TaskSubmitter {
     public:
-      LocalModeTaskSubmitter(LocalModeMcsRuntime &local_mode_mcs_tuntime);
+      LocalModeTaskSubmitter(LocalModeMcsRuntime &local_mode_mcs_runtime);
 
       ObjectID SubmitTask(InvocationSpec &invocation, const CallOptions &call_options);
 
@@ -40,7 +40,7 @@ namespace mcs {
     private:
       ObjectID Submit(InvocationSpec &invocation, const ActorCreationOptions &options);
 
-//      std::unordered_map<ActorID, std::unique_ptr<ActorContext>> actor_contexts_;
+      std::unordered_map<ActorID, std::unique_ptr<ActorContext>> actor_contexts_;
 
       absl::Mutex actor_contexts_mutex_;
 
@@ -49,7 +49,7 @@ namespace mcs {
 
       std::unique_ptr<boost::asio::thread_pool> thread_pool_;
 
-      LocalModeMcsRuntime &local_mode_mcs_tuntime_;
+      LocalModeMcsRuntime &local_mode_mcs_runtime_;
 
       std::unordered_map<std::string, mcs::PlacementGroup> placement_groups_;
     };

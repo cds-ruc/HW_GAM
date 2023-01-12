@@ -6,6 +6,7 @@
 
 #include <mcs/api/function_manager.h>
 #include <mcs/api/task_caller.h>
+#include <mcs/api/object_ref.h>
 #include "mcs/api/mcs_remote.h"
 #include "mcs_config.h"
 #include <mcs/util/logging.h>
@@ -22,6 +23,17 @@ namespace mcs {
 
   /// 关闭
   void Shutdown();
+
+  /// 从ObjectStore获取一个Object对象.
+  /// 阻塞调用，在获取到之前会阻塞
+  template <typename T>
+  std::shared_ptr<T> Get(const mcs::ObjectRef<T> &object);
+
+
+  template <typename T>
+  inline std::shared_ptr<T> Get(const mcs::ObjectRef<T> &object) {
+    return GetFromRuntime(object);
+  }
 
   /// 创建一个回调任务用来执行远程函数
 /// 仅用于无状态的普通函数，例如 mcs::Task(Plus1).Remote(1),

@@ -13,10 +13,10 @@
 
 #include "absl/synchronization/mutex.h"
 #include "mcs/common/function_descriptor.h"
-#include "mcs/common/grpc_util.h"
+#include "mcs/util/grpc_util.h"
 #include "mcs/common/id.h"
-//#include "mcs/common/task/scheduling_resources.h"
-//#include "mcs/common/task/task_common.h"
+#include "mcs/runtime/task/scheduling_resources.h"
+#include "mcs/runtime/task/task_common.h"
 //#include "mcs/util/container_util.h"
 
 extern "C" {

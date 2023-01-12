@@ -16,9 +16,6 @@
 #include "local_mode_mcs_runtime.h"
 //#include "native_mcs_runtime.h"
 
-#include "mcs/runtime/task/invocation_spec.h"
-#include "mcs/common/buffer.h"
-
 namespace mcs {
 
   namespace internal {
@@ -26,8 +23,8 @@ namespace mcs {
       msgpack::sbuffer sbuffer;
       msgpack::packer<msgpack::sbuffer> packer(sbuffer);
       packer.pack(msgpack::type::nil_t());
-//      packer.pack(std::make_tuple((int)mcs::rpc::ErrorType::TASK_EXECUTION_EXCEPTION,
-//                                  std::move(error_msg)));
+      packer.pack(std::make_tuple((int)mcs::rpc::ErrorType::TASK_EXECUTION_EXCEPTION,
+                                  std::move(error_msg)));
 
       return sbuffer;
     }
@@ -35,7 +32,7 @@ namespace mcs {
   namespace internal {
 
 //    using mcs::core::CoreWorkerProcess;
-    using mcs::core::WorkerType;
+    using mcs::rpc::WorkerType;
 
     std::shared_ptr<AbstractMcsRuntime> AbstractMcsRuntime::abstract_mcs_runtime_ = nullptr;
 
@@ -69,42 +66,41 @@ namespace mcs {
         ProcessHelper::GetInstance().McsStop();
       }
     }
-//
-//    void AbstractMcsRuntime::Put(std::shared_ptr<msgpack::sbuffer> data,
-//                                 ObjectID *object_id) {
-//      object_store_->Put(data, object_id);
-//    }
-//
-//    void AbstractMcsRuntime::Put(std::shared_ptr<msgpack::sbuffer> data,
-//                                 const ObjectID &object_id) {
-//      object_store_->Put(data, object_id);
-//    }
-//
-//    std::string AbstractMcsRuntime::Put(std::shared_ptr<msgpack::sbuffer> data) {
-//      ObjectID object_id;
-//      object_store_->Put(data, &object_id);
-//      return object_id.Binary();
-//    }
-//
-    std::shared_ptr<msgpack::sbuffer> AbstractMcsRuntime::Get(const std::string &object_id) {
-//      return object_store_->Get(ObjectID::FromBinary(object_id), -1);
-      return nullptr;
+
+    void AbstractMcsRuntime::Put(std::shared_ptr<msgpack::sbuffer> data,
+                                 ObjectID *object_id) {
+      object_store_->Put(data, object_id);
     }
 
-//
-//    inline static std::vector<ObjectID> StringIDsToObjectIDs(
-//            const std::vector<std::string> &ids) {
-//      std::vector<ObjectID> object_ids;
-//      for (std::string id : ids) {
-//        object_ids.push_back(ObjectID::FromBinary(id));
-//      }
-//      return object_ids;
-//    }
-//
-//    std::vector<std::shared_ptr<msgpack::sbuffer>> AbstractMcsRuntime::Get(
-//            const std::vector<std::string> &ids) {
-//      return object_store_->Get(StringIDsToObjectIDs(ids), -1);
-//    }
+    void AbstractMcsRuntime::Put(std::shared_ptr<msgpack::sbuffer> data,
+                                 const ObjectID &object_id) {
+      object_store_->Put(data, object_id);
+    }
+
+    std::string AbstractMcsRuntime::Put(std::shared_ptr<msgpack::sbuffer> data) {
+      ObjectID object_id;
+      object_store_->Put(data, &object_id);
+      return object_id.Binary();
+    }
+
+    std::shared_ptr<msgpack::sbuffer> AbstractMcsRuntime::Get(const std::string &object_id) {
+      return object_store_->Get(ObjectID::FromBinary(object_id), -1);
+    }
+
+
+    inline static std::vector<ObjectID> StringIDsToObjectIDs(
+            const std::vector<std::string> &ids) {
+      std::vector<ObjectID> object_ids;
+      for (std::string id : ids) {
+        object_ids.push_back(ObjectID::FromBinary(id));
+      }
+      return object_ids;
+    }
+
+    std::vector<std::shared_ptr<msgpack::sbuffer>> AbstractMcsRuntime::Get(
+            const std::vector<std::string> &ids) {
+      return object_store_->Get(StringIDsToObjectIDs(ids), -1);
+    }
 //
 //    std::vector<bool> AbstractMcsRuntime::Wait(const std::vector<std::string> &ids,
 //                                               int num_objects,
@@ -167,7 +163,6 @@ namespace mcs {
                                          const CallOptions &task_options) {
       auto invocation_spec = BuildInvocationSpec1(
               TaskType::NORMAL_TASK, remote_function_holder, args, ActorID::Nil());
-      printf("生成任务信息\n");
       return task_submitter_->SubmitTask(invocation_spec, task_options).Binary();
     }
 //
@@ -213,18 +208,18 @@ namespace mcs {
 //      return task_submitter_->SubmitActorTask(invocation_spec, call_options).Binary();
 //    }
 //
-//    const TaskID &AbstractMcsRuntime::GetCurrentTaskId() {
-//      return GetWorkerContext().GetCurrentTaskID();
-//    }
-//
-    const JobID &AbstractMcsRuntime::GetCurrentJobID() {
-//      return GetWorkerContext().GetCurrentJobID();
+    const TaskID &AbstractMcsRuntime::GetCurrentTaskId() {
+      return GetWorkerContext().GetCurrentTaskID();
     }
-//
-//    const ActorID &AbstractMcsRuntime::GetCurrentActorID() {
-//      return GetWorkerContext().GetCurrentActorID();
-//    }
-//
+
+    const JobID &AbstractMcsRuntime::GetCurrentJobID() {
+      return GetWorkerContext().GetCurrentJobID();
+    }
+
+    const ActorID &AbstractMcsRuntime::GetCurrentActorID() {
+      return GetWorkerContext().GetCurrentActorID();
+    }
+
     void AbstractMcsRuntime::AddLocalReference(const std::string &id) {
 //      if (CoreWorkerProcess::IsInitialized()) {
 //        auto &core_worker = CoreWorkerProcess::GetCoreWorker();

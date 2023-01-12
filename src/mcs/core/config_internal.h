@@ -9,11 +9,12 @@
 #include <string_view>
 
 #include "mcs/mcs_config.h"
-#include "core_worker.h"
+#include "mcs/core/common.h"
 
 namespace mcs {
   namespace internal {
-    using mcs::core::WorkerType;
+
+      using mcs::core::WorkerType;
 
     enum class RunMode { SINGLE_PROCESS, CLUSTER };
 

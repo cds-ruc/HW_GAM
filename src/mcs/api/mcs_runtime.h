@@ -46,8 +46,8 @@ namespace mcs {
       virtual std::string Put(std::shared_ptr<msgpack::sbuffer> data) = 0;
       virtual std::shared_ptr<msgpack::sbuffer> Get(const std::string &id) = 0;
 
-//      virtual std::vector<std::shared_ptr<msgpack::sbuffer>> Get(
-//              const std::vector<std::string> &ids) = 0;
+      virtual std::vector<std::shared_ptr<msgpack::sbuffer>> Get(
+              const std::vector<std::string> &ids) = 0;
 
 //      virtual std::vector<bool> Wait(const std::vector<std::string> &ids,
 //                                     int num_objects,

@@ -9,8 +9,7 @@
 #include "mcs/common/buffer.h"
 #include "mcs/common/id.h"
 #include "mcs/util/logging.h"
-//#include "src/mcs/protobuf/gcs.pb.h"
-#include "mcs/rpc/rpc.h"
+#include "mcs/protobuf/gcs.pb.h"
 
 namespace mcs {
 
@@ -70,7 +69,7 @@ namespace mcs {
     ///
     /// \param[in] error_type Error type.
     /// \param[in] mcs_error_info The error information that this object body contains.
-//    McsObject(rpc::ErrorType error_type, const rpc::McsErrorInfo *mcs_error_info = nullptr);
+    McsObject(rpc::ErrorType error_type, const rpc::McsErrorInfo *mcs_error_info = nullptr);
 
     /// Return the data of the mcs object.
     std::shared_ptr<Buffer> GetData() const {
@@ -101,7 +100,7 @@ namespace mcs {
     bool HasMetadata() const { return metadata_ != nullptr; }
 
     /// Whether the object represents an exception.
-//    bool IsException(rpc::ErrorType *error_type = nullptr) const;
+    bool IsException(rpc::ErrorType *error_type = nullptr) const;
 
     /// Whether the object has been promoted to plasma (i.e., since it was too
     /// large to return directly as part of a gRPC response).

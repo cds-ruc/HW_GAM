@@ -10,7 +10,7 @@
 
 #include <sstream>
 
-//#include "absl/container/flat_hash_map.h"
+#include "absl/container/flat_hash_map.h"
 #include "mcs/common/status.h"
 
 namespace mcs {
@@ -77,10 +77,10 @@ namespace mcs {
   }
 
   inline std::string GrpcStatusToMcsStatusMessage(const grpc::Status &grpc_status) {
-//    return absl::StrCat("RPC Error message: ",
-//                        grpc_status.error_message(),
-//                        "; RPC Error details: ",
-//                        grpc_status.error_details());
+    return absl::StrCat("RPC Error message: ",
+                        grpc_status.error_message(),
+                        "; RPC Error details: ",
+                        grpc_status.error_details());
       return "";
   }
 
@@ -133,10 +133,10 @@ namespace mcs {
   }
 
 /// Converts a Protobuf map to a cpp map
-//  template <class K, class V>
-//  inline absl::flat_hash_map<K, V> MapFromProtobuf(
-//          const ::google::protobuf::Map<K, V> &pb_map) {
-//    return absl::flat_hash_map<K, V>(pb_map.begin(), pb_map.end());
-//  }
+  template <class K, class V>
+  inline absl::flat_hash_map<K, V> MapFromProtobuf(
+          const ::google::protobuf::Map<K, V> &pb_map) {
+    return absl::flat_hash_map<K, V>(pb_map.begin(), pb_map.end());
+  }
 
 }  // namespace mcs

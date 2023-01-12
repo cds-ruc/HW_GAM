@@ -87,19 +87,19 @@ namespace mcs {
       } catch (McsIntentionalSystemExitException &e) {
         MCS_LOG(ERROR) << "Mcs intentional system exit while executing function(" << func_name
                        << ").";
-//        return std::make_pair(mcs::Status::IntentionalSystemExit(""), nullptr);
+        return std::make_pair(mcs::Status::IntentionalSystemExit(""), nullptr);
       } catch (const std::exception &e) {
         auto exception_name =
                 std::string(abi::__cxa_demangle(typeid(e).name(), nullptr, nullptr, nullptr));
         std::string err_msg = "An exception was thrown while executing function(" +
                               func_name + "): " + exception_name + ": " + e.what();
         MCS_LOG(ERROR) << err_msg;
-//        return std::make_pair(mcs::Status::Invalid(err_msg), nullptr);
+        return std::make_pair(mcs::Status::Invalid(err_msg), nullptr);
       } catch (...) {
         MCS_LOG(ERROR) << "An unknown exception was thrown while executing function("
                        << func_name << ").";
-//        return std::make_pair(mcs::Status::UnknownError(std::string("unknown exception")),
-//                              nullptr);
+        return std::make_pair(mcs::Status::UnknownError(std::string("unknown exception")),
+                              nullptr);
       }
     }
 
@@ -251,55 +251,54 @@ namespace mcs {
 //      return mcs::Status::OK();
 //    }
 
-//    void TaskExecutor::Invoke(
-//            const TaskSpecification &task_spec,
-//            std::shared_ptr<msgpack::sbuffer> actor,
-//            AbstractMcsRuntime *runtime,
-//            std::unordered_map<ActorID, std::unique_ptr<ActorContext>> &actor_contexts,
-//            absl::Mutex &actor_contexts_mutex) {
-//      ArgsBufferList args_buffer;
-//      for (size_t i = 0; i < task_spec.NumArgs(); i++) {
-//        if (task_spec.ArgByRef(i)) {
-//          const auto &id = task_spec.ArgId(i).Binary();
-//          msgpack::sbuffer sbuf;
-//          sbuf.write(id.data(), id.size());
-//          args_buffer.push_back(std::move(sbuf));
-//        } else {
-//          msgpack::sbuffer sbuf;
-//          sbuf.write((const char *)task_spec.ArgData(i), task_spec.ArgDataSize(i));
-//          args_buffer.push_back(std::move(sbuf));
-//        }
-//      }
-//
-//      auto function_descriptor = task_spec.FunctionDescriptor();
-//      auto typed_descriptor = function_descriptor->As<mcs::CppFunctionDescriptor>();
-//
-//      std::shared_ptr<msgpack::sbuffer> data;
-//      try {
-//        if (actor) {
-//          auto result = TaskExecutionHandler(
-//                  typed_descriptor->FunctionName(), args_buffer, actor.get());
-//          data = std::make_shared<msgpack::sbuffer>(std::move(result));
-//          runtime->Put(std::move(data), task_spec.ReturnId(0));
-//        } else {
-//          auto result =
-//                  TaskExecutionHandler(typed_descriptor->FunctionName(), args_buffer, nullptr);
-//          data = std::make_shared<msgpack::sbuffer>(std::move(result));
-//          if (task_spec.IsActorCreationTask()) {
-//            std::unique_ptr<ActorContext> actorContext(new ActorContext());
-//            actorContext->current_actor = data;
-//            absl::MutexLock lock(&actor_contexts_mutex);
-//            actor_contexts.emplace(task_spec.ActorCreationId(), std::move(actorContext));
-//          } else {
-//            runtime->Put(std::move(data), task_spec.ReturnId(0));
-//          }
-//        }
-//      } catch (std::exception &e) {
-//        auto result = PackError(e.what());
-//        auto data = std::make_shared<msgpack::sbuffer>(std::move(result));
-//        runtime->Put(std::move(data), task_spec.ReturnId(0));
-//      }
-//    }
+    void TaskExecutor::Invoke(
+            const TaskSpecification &task_spec,
+            std::shared_ptr<msgpack::sbuffer> actor,
+            AbstractMcsRuntime *runtime,
+            std::unordered_map<ActorID, std::unique_ptr<ActorContext>> &actor_contexts,
+            absl::Mutex &actor_contexts_mutex) {
+      ArgsBufferList args_buffer;
+      for (size_t i = 0; i < task_spec.NumArgs(); i++) {
+        if (task_spec.ArgByRef(i)) {
+          const auto &id = task_spec.ArgId(i).Binary();
+          msgpack::sbuffer sbuf;
+          sbuf.write(id.data(), id.size());
+          args_buffer.push_back(std::move(sbuf));
+        } else {
+          msgpack::sbuffer sbuf;
+          sbuf.write((const char *)task_spec.ArgData(i), task_spec.ArgDataSize(i));
+          args_buffer.push_back(std::move(sbuf));
+        }
+      }
+      auto function_descriptor = task_spec.FunctionDescriptor();
+      auto typed_descriptor = function_descriptor->As<mcs::CppFunctionDescriptor>();
+
+      std::shared_ptr<msgpack::sbuffer> data;
+      try {
+        if (actor) {
+          auto result = TaskExecutionHandler(
+                  typed_descriptor->FunctionName(), args_buffer, actor.get());
+          data = std::make_shared<msgpack::sbuffer>(std::move(result));
+          runtime->Put(std::move(data), task_spec.ReturnId(0));
+        } else {
+          auto result =
+                  TaskExecutionHandler(typed_descriptor->FunctionName(), args_buffer, nullptr);
+          data = std::make_shared<msgpack::sbuffer>(std::move(result));
+          if (task_spec.IsActorCreationTask()) {
+            std::unique_ptr<ActorContext> actorContext(new ActorContext());
+            actorContext->current_actor = data;
+            absl::MutexLock lock(&actor_contexts_mutex);
+            actor_contexts.emplace(task_spec.ActorCreationId(), std::move(actorContext));
+          } else {
+            runtime->Put(std::move(data), task_spec.ReturnId(0));
+          }
+        }
+      } catch (std::exception &e) {
+        auto result = PackError(e.what());
+        auto data = std::make_shared<msgpack::sbuffer>(std::move(result));
+        runtime->Put(std::move(data), task_spec.ReturnId(0));
+      }
+    }
 
   }  // namespace internal
 }  // namespace mcs

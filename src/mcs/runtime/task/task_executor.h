@@ -13,7 +13,7 @@
 #include "absl/synchronization/mutex.h"
 #include "invocation_spec.h"
 #include "mcs/common/id.h"
-//#include "mcs/common/task/task_spec.h"
+#include "mcs/runtime/task/task_spec.h"
 //#include "mcs/core_worker/common.h"
 
 namespace mcs {
@@ -57,13 +57,13 @@ namespace mcs {
     public:
       TaskExecutor() = default;
 
-//      static void Invoke(
-//              const TaskSpecification &task_spec,
-//              std::shared_ptr<msgpack::sbuffer> actor,
-//              AbstractMcsRuntime *runtime,
-//              std::unordered_map<ActorID, std::unique_ptr<ActorContext>> &actor_contexts,
-//              absl::Mutex &actor_contexts_mutex);
-
+      static void Invoke(
+              const TaskSpecification &task_spec,
+              std::shared_ptr<msgpack::sbuffer> actor,
+              AbstractMcsRuntime *runtime,
+              std::unordered_map<ActorID, std::unique_ptr<ActorContext>> &actor_contexts,
+              absl::Mutex &actor_contexts_mutex);
+//
 //      static Status ExecuteTask(
 //              const rpc::Address &caller_address,
 //              mcs::TaskType task_type,

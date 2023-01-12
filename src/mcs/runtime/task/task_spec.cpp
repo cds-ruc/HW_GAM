@@ -7,8 +7,8 @@
 #include <boost/functional/hash.hpp>
 #include <sstream>
 
-//#include "mcs/common/mcs_config.h"
-//#include "mcs/common/runtime_env_common.h"
+#include "mcs/common/mcs_config.h"
+#include "mcs/common/runtime_env_common.h"
 #include "mcs/util/logging.h"
 
 namespace mcs {
@@ -183,7 +183,7 @@ namespace mcs {
                 SerializedRuntimeEnv(),
                 required_resource,
                 IsActorCreationTask() && McsConfig::instance().isolate_workers_across_task_types(),
-                GetRequiredResources().GetResource("GPU") > 0 &&
+//                GetRequiredResources().GetResource("GPU") > 0 &&
                 McsConfig::instance().isolate_workers_across_resource_types()};
         return env.IntHash();
     }

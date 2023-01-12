@@ -16,11 +16,11 @@ namespace mcs {
       LocalModeMcsRuntime();
 //      ActorID GetNextActorID();
       std::string Put(std::shared_ptr<msgpack::sbuffer> data);
-//      const WorkerContext &GetWorkerContext();
+      const WorkerContext &GetWorkerContext();
       bool IsLocalMode() { return true; }
 
     private:
-//      WorkerContext worker_;
+      WorkerContext worker_;
     };
 
   }  // namespace internal

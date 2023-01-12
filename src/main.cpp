@@ -12,7 +12,10 @@ MCS_REMOTE(plus);
 int main() {
   mcs::Init();
   auto task_object = mcs::Task(plus).Remote(1, 2);
-//  int task_result = *(ray::Get(task_object));
-//  std::cout << "task_result = " << task_result << std::endl;
+
+  sleep(1);
+  int task_result = *(mcs::Get(task_object));
+  std::cout << "task_result = " << task_result << std::endl;
+
   return 0;
 }
