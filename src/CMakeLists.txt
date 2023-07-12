@@ -59,9 +59,7 @@ set(BOOST boost_filesystem boost_system boost_thread pthread)
 set(ABSL absl)
 set(Photon photon_static gflags)
 
-
-#${PROJECT_SOURCE_DIR}/../gam/lib/libcuckoo/cityhash-1.1.1/src/.libs/libcityhash.a
-set(GAM ${PROJECT_SOURCE_DIR}/../thrid/libgalloc.a )
+set(GAM ${PROJECT_SOURCE_DIR}/../thrid/libgalloc.a ${PROJECT_SOURCE_DIR}/../gam/lib/libcuckoo/cityhash-1.1.1/src/.libs/libcityhash.a ibverbs)
 
 # 生成可执行文件
 add_executable(${PROJECT_NAME} ${ALL_SRC})
