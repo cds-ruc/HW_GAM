@@ -6,8 +6,6 @@ add_definitions("-Wall -g")
 
 find_package(Boost REQUIRED)
 find_package(Gflags REQUIRED)
-# find_package(Protobuf REQUIRED)
-# find_package(gRPC REQUIRED)
 
 
 

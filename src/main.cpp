@@ -12,7 +12,9 @@
 
 void plus(int a, int b) {
   // printf("run plus\n");
-  std::cout << "plus " << a << " + " << b << " = " <<  a + b << std::endl;
+  while(1) {
+    std::cout << "plus " << a << " + " << b << " = " <<  a + b << std::endl;
+  }
 }
 MCS_REMOTE(plus);
 
@@ -58,8 +60,12 @@ int main(int argc, char** argv) {
       //                           FLAGS_port);
       // client.rpc_resister(ep);
       mcs::Init();
-      auto task_result = mcs::Task(plus).Remote(10010240,2412424);
-      mcs::Get(task_result);
+      for (int i = 0; i < 3; i++) {
+        mcs::Task(plus).Remote(i,i);
+      }
+      // for (int i = 0; i < 3; i++) {
+      //   mcs::Get(results[i]);
+      // }
 
     }
     return 0;
