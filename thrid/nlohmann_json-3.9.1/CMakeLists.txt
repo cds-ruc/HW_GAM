@@ -104,8 +104,8 @@ CONFIGURE_FILE(
 include(CTest) #adds option BUILD_TESTING (default ON)
 
 if(BUILD_TESTING AND JSON_BuildTests)
-    enable_testing()
-    add_subdirectory(test)
+    # enable_testing()
+    # add_subdirectory(test)
 endif()
 
 ##

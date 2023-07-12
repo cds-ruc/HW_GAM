@@ -11,17 +11,13 @@
 
 #include "mcs/core/config_internal.h"
 #include "mcs/util/process_helper.h"
-#include "mcs/runtime/object/object_store.h"
-#include "mcs/runtime/task/task_executor.h"
-#include "mcs/runtime/task/task_submitter.h"
-#include "mcs/common/id.h"
-#include "mcs/core/context.h"
-//#include "mcs/core_worker/core_worker.h"
+#include "mcs/task/task_executor.h"
+#include "mcs/task/task_submitter.h"
 
 namespace mcs {
   namespace internal {
 
-    using mcs::core::WorkerContext;
+//     using mcs::core::WorkerContext;
 
     class McsIntentionalSystemExitException : public McsException {
     public:
@@ -32,17 +28,19 @@ namespace mcs {
     public:
       virtual ~AbstractMcsRuntime(){};
 
-      void Put(std::shared_ptr<msgpack::sbuffer> data, ObjectID *object_id);
+      // void Put(std::shared_ptr<msgpack::sbuffer> data, ObjectID *object_id);
 
-      void Put(std::shared_ptr<msgpack::sbuffer> data, const ObjectID &object_id);
+      // void Put(std::shared_ptr<msgpack::sbuffer> data, const ObjectID &object_id);
 
-      void Put(mcs::rpc::ErrorType type, const ObjectID &object_id);
+      // void Put(mcs::rpc::ErrorType type, const ObjectID &object_id);
 
-      std::string Put(std::shared_ptr<msgpack::sbuffer> data);
+      uint64_t CreateNewTask();
+
+      void ChangeTaskStatus(uint64_t task_id);
 
       std::shared_ptr<msgpack::sbuffer> Get(const std::string &id);
 
-      std::vector<std::shared_ptr<msgpack::sbuffer>> Get(const std::vector<std::string> &ids);
+      // std::vector<std::shared_ptr<msgpack::sbuffer>> Get(const std::vector<std::string> &ids);
 //
 //      std::vector<bool> Wait(const std::vector<std::string> &ids,
 //                             int num_objects,
@@ -76,13 +74,13 @@ namespace mcs {
 //      void RemovePlacementGroup(const std::string &group_id);
 //      bool WaitPlacementGroupReady(const std::string &group_id, int64_t timeout_seconds);
 //
-      const TaskID &GetCurrentTaskId();
+      // const TaskID &GetCurrentTaskId();
 
-      const JobID &GetCurrentJobID();
+      // const JobID &GetCurrentJobID();
 
-      const ActorID &GetCurrentActorID();
+      // const ActorID &GetCurrentActorID();
 
-      virtual const WorkerContext &GetWorkerContext() = 0;
+      // virtual const WorkerContext &GetWorkerContext() = 0;
 
       static std::shared_ptr<AbstractMcsRuntime> GetInstance();
       static std::shared_ptr<AbstractMcsRuntime> DoInit();
@@ -99,16 +97,18 @@ namespace mcs {
 //
 //      std::string GetNamespace();
       std::string SerializeActorHandle(const std::string &actor_id);
-//      std::string DeserializeAndRegisterActorHandle(
-//              const std::string &serialized_actor_handle);
-//
+      std::string DeserializeAndRegisterActorHandle(
+             const std::string &serialized_actor_handle);
+
     protected:
       std::unique_ptr<TaskSubmitter> task_submitter_;
       std::unique_ptr<TaskExecutor> task_executor_;
-      std::unique_ptr<ObjectStore> object_store_;
+      // std::unique_ptr<ObjectStore> object_store_;
 //      std::unique_ptr<mcs::gcs::GlobalStateAccessor> global_state_accessor_;
 //
     private:
+      uint64_t current_task_id_ = 0;
+      std::unordered_map<uint64_t, bool> task_status_map_;
       static std::shared_ptr<AbstractMcsRuntime> abstract_mcs_runtime_;
 //      void Execute(const TaskSpecification &task_spec);
 //      PlacementGroup GeneratePlacementGroup(const std::string &str);

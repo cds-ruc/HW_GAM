@@ -7,6 +7,7 @@
 #include <mcs/api/object_ref.h>
 #include <mcs/api/serializer.h>
 #include <mcs/api/type_traits.h>
+#include <mcs/api/xlang_function.h>
 
 #include <msgpack.hpp>
 #include <type_traits>

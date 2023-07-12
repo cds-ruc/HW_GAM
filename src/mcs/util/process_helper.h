@@ -6,7 +6,7 @@
 
 #include <vector>
 
-#include "mcs/core/config_internal.h"
+// #include "mcs/core/config_internal.h"
 #include "mcs/core/core_worker.h"
 #include "mcs/util/util.h"
 

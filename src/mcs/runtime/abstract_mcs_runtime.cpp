@@ -11,6 +11,7 @@
 
 #include <cassert>
 
+#include "mcs/core/buffer.h"
 #include "mcs/core/config_internal.h"
 #include "mcs/util/function_helper.h"
 #include "local_mode_mcs_runtime.h"
@@ -23,8 +24,8 @@ namespace mcs {
       msgpack::sbuffer sbuffer;
       msgpack::packer<msgpack::sbuffer> packer(sbuffer);
       packer.pack(msgpack::type::nil_t());
-      packer.pack(std::make_tuple((int)mcs::rpc::ErrorType::TASK_EXECUTION_EXCEPTION,
-                                  std::move(error_msg)));
+      // packer.pack(std::make_tuple((int)mcs::rpc::ErrorType::TASK_EXECUTION_EXCEPTION,
+      //                             std::move(error_msg)));
 
       return sbuffer;
     }
@@ -32,7 +33,7 @@ namespace mcs {
   namespace internal {
 
 //    using mcs::core::CoreWorkerProcess;
-    using mcs::rpc::WorkerType;
+    // using mcs::rpc::WorkerType;
 
     std::shared_ptr<AbstractMcsRuntime> AbstractMcsRuntime::abstract_mcs_runtime_ = nullptr;
 
@@ -47,11 +48,11 @@ namespace mcs {
       }
       MCS_CHECK(runtime);
       internal::McsRuntimeHolder::Instance().Init(runtime);
-      if (ConfigInternal::Instance().worker_type == WorkerType::WORKER) {
+      // if (ConfigInternal::Instance().worker_type == WorkerType::WORKER) {
         // Load functions from code search path.
         FunctionHelper::GetInstance().LoadFunctionsFromPaths(
                 ConfigInternal::Instance().code_search_path);
-      }
+      // }
       abstract_mcs_runtime_ = runtime;
       return runtime;
     }
@@ -67,94 +68,91 @@ namespace mcs {
       }
     }
 
-    void AbstractMcsRuntime::Put(std::shared_ptr<msgpack::sbuffer> data,
-                                 ObjectID *object_id) {
-      object_store_->Put(data, object_id);
+    // void AbstractMcsRuntime::Put(std::shared_ptr<msgpack::sbuffer> data,
+    //                              ObjectID *object_id) {
+    //   object_store_->Put(data, object_id);
+    // }
+
+    // void AbstractMcsRuntime::Put(std::shared_ptr<msgpack::sbuffer> data,
+    //                              const ObjectID &object_id) {
+    //   object_store_->Put(data, object_id);
+    // }
+
+    // std::string AbstractMcsRuntime::Put(std::shared_ptr<msgpack::sbuffer> data) {
+    //   ObjectID object_id;
+    //   object_store_->Put(data, &object_id);
+    //   return object_id.Binary();
+    // }
+    uint64_t AbstractMcsRuntime::CreateNewTask() {
+       task_status_map_.insert(std::pair<uint64_t, bool>(current_task_id_, false));
+       printf("create task %d\n", current_task_id_);
+       return current_task_id_++;
     }
 
-    void AbstractMcsRuntime::Put(std::shared_ptr<msgpack::sbuffer> data,
-                                 const ObjectID &object_id) {
-      object_store_->Put(data, object_id);
-    }
-
-    std::string AbstractMcsRuntime::Put(std::shared_ptr<msgpack::sbuffer> data) {
-      ObjectID object_id;
-      object_store_->Put(data, &object_id);
-      return object_id.Binary();
+    void AbstractMcsRuntime::ChangeTaskStatus(uint64_t task_id) {
+      printf("change task_id %d\n", task_id);
+      task_status_map_[task_id] = true;
     }
 
     std::shared_ptr<msgpack::sbuffer> AbstractMcsRuntime::Get(const std::string &object_id) {
-      return object_store_->Get(ObjectID::FromBinary(object_id), -1);
-    }
-
-
-    inline static std::vector<ObjectID> StringIDsToObjectIDs(
-            const std::vector<std::string> &ids) {
-      std::vector<ObjectID> object_ids;
-      for (std::string id : ids) {
-        object_ids.push_back(ObjectID::FromBinary(id));
-      }
-      return object_ids;
-    }
-
-    std::vector<std::shared_ptr<msgpack::sbuffer>> AbstractMcsRuntime::Get(
-            const std::vector<std::string> &ids) {
-      return object_store_->Get(StringIDsToObjectIDs(ids), -1);
-    }
-//
-//    std::vector<bool> AbstractMcsRuntime::Wait(const std::vector<std::string> &ids,
-//                                               int num_objects,
-//                                               int timeout_ms) {
-//      return object_store_->Wait(StringIDsToObjectIDs(ids), num_objects, timeout_ms);
-//    }
-
-    std::vector<std::unique_ptr<::mcs::TaskArg>> TransformArgs(
-            std::vector<mcs::internal::TaskArg> &args, bool cross_lang) {
-      std::vector<std::unique_ptr<::mcs::TaskArg>> mcs_args;
-      for (auto &arg : args) {
-        std::unique_ptr<::mcs::TaskArg> mcs_arg = nullptr;
-        if (arg.buf) {
-          auto &buffer = *arg.buf;
-          auto memory_buffer = std::make_shared<mcs::LocalMemoryBuffer>(
-                  reinterpret_cast<uint8_t *>(buffer.data()), buffer.size(), true);
-          std::shared_ptr<Buffer> metadata = nullptr;
-          if (cross_lang) {
-            auto meta_str = arg.meta_str;
-            metadata = std::make_shared<mcs::LocalMemoryBuffer>(
-                    reinterpret_cast<uint8_t *>(const_cast<char *>(meta_str.data())),
-                    meta_str.size(),
-                    true);
-          }
-          mcs_arg = absl::make_unique<mcs::TaskArgByValue>(std::make_shared<mcs::McsObject>(
-                  memory_buffer, metadata, std::vector<rpc::ObjectReference>()));
+      while(1) {
+        printf("task %d status %s\n", std::stoi(object_id), task_status_map_[std::stoi(object_id)] == false ? "running" : "finish");
+        if(task_status_map_[std::stoi(object_id)] == true) {
+          break;
         } else {
-          MCS_CHECK(arg.id);
-//          auto id = ObjectID::FromBinary(*arg.id);
-//          auto owner_address = mcs::rpc::Address{};
-//          if (ConfigInternal::Instance().run_mode == RunMode::CLUSTER) {
-//            auto &core_worker = CoreWorkerProcess::GetCoreWorker();
-//            owner_address = core_worker.GetOwnerAddressOrDie(id);
-//          }
-//          mcs_arg = absl::make_unique<mcs::TaskArgByReference>(id,
-//                                                               owner_address,
-//                  /*call_site=*/"");
+          sleep(1);
         }
-        mcs_args.push_back(std::move(mcs_arg));
       }
+      return nullptr;
+    }
 
+
+
+
+    // inline static std::vector<ObjectID> StringIDsToObjectIDs(
+    //         const std::vector<std::string> &ids) {
+    //   std::vector<ObjectID> object_ids;
+    //   for (std::string id : ids) {
+    //     object_ids.push_back(ObjectID::FromBinary(id));
+    //   }
+    //   return object_ids;
+    // }
+
+    // std::vector<std::shared_ptr<msgpack::sbuffer>> AbstractMcsRuntime::Get(
+    //         const std::vector<std::string> &ids) {
+    //   return object_store_->Get(StringIDsToObjectIDs(ids), -1);
+    // }
+
+  //  std::vector<bool> AbstractMcsRuntime::Wait(const std::vector<std::string> &ids,
+  //                                             int num_objects,
+  //                                             int timeout_ms) {
+  //    return object_store_->Wait(StringIDsToObjectIDs(ids), num_objects, timeout_ms);
+  //  }
+
+    std::vector<std::shared_ptr<LocalMemoryBuffer>> TransformArgs(
+            std::vector<mcs::internal::TaskArg> &args) {
+      std::vector<std::shared_ptr<LocalMemoryBuffer>> mcs_args;
+      for (auto &arg : args) {
+        auto &buffer = *arg.buf;
+        auto memory_buffer = std::make_shared<mcs::LocalMemoryBuffer>(
+                reinterpret_cast<uint8_t *>(buffer.data()), buffer.size(), true);
+        // std::shared_ptr<Buffer> metadata = nullptr;
+        // mcs_arg = absl::make_unique<mcs::TaskArgByValue>(std::make_shared<mcs::McsObject>(
+        //         memory_buffer, metadata, std::vector<rpc::ObjectReference>()));
+        printf("buffer %d size %d\n",*buffer.data(), buffer.size() );
+        printf("memory buffer %d size %d\n",*memory_buffer->Data(), memory_buffer->Size() );
+        mcs_args.push_back(memory_buffer);
+      }
       return mcs_args;
     }
 
     InvocationSpec BuildInvocationSpec1(TaskType task_type,
                                         const RemoteFunctionHolder &remote_function_holder,
-                                        std::vector<mcs::internal::TaskArg> &args,
-                                        const ActorID &actor) {
+                                        std::vector<mcs::internal::TaskArg> &args) {
       InvocationSpec invocation_spec;
       invocation_spec.task_type = task_type;
       invocation_spec.remote_function_holder = remote_function_holder;
-      invocation_spec.actor_id = actor;
-      invocation_spec.args =
-              TransformArgs(args, remote_function_holder.lang_type != LangType::CPP);
+      invocation_spec.args = TransformArgs(args);
       return invocation_spec;
     }
 
@@ -162,8 +160,8 @@ namespace mcs {
                                          std::vector<mcs::internal::TaskArg> &args,
                                          const CallOptions &task_options) {
       auto invocation_spec = BuildInvocationSpec1(
-              TaskType::NORMAL_TASK, remote_function_holder, args, ActorID::Nil());
-      return task_submitter_->SubmitTask(invocation_spec, task_options).Binary();
+              TaskType::NORMAL_TASK, remote_function_holder, args);
+      return std::to_string(task_submitter_->SubmitTask(invocation_spec, task_options));
     }
 //
 //    std::string AbstractMcsRuntime::CreateActor(
@@ -208,17 +206,17 @@ namespace mcs {
 //      return task_submitter_->SubmitActorTask(invocation_spec, call_options).Binary();
 //    }
 //
-    const TaskID &AbstractMcsRuntime::GetCurrentTaskId() {
-      return GetWorkerContext().GetCurrentTaskID();
-    }
+    // const TaskID &AbstractMcsRuntime::GetCurrentTaskId() {
+    //   return GetWorkerContext().GetCurrentTaskID();
+    // }
 
-    const JobID &AbstractMcsRuntime::GetCurrentJobID() {
-      return GetWorkerContext().GetCurrentJobID();
-    }
+    // const JobID &AbstractMcsRuntime::GetCurrentJobID() {
+    //   return GetWorkerContext().GetCurrentJobID();
+    // }
 
-    const ActorID &AbstractMcsRuntime::GetCurrentActorID() {
-      return GetWorkerContext().GetCurrentActorID();
-    }
+    // const ActorID &AbstractMcsRuntime::GetCurrentActorID() {
+    //   return GetWorkerContext().GetCurrentActorID();
+    // }
 
     void AbstractMcsRuntime::AddLocalReference(const std::string &id) {
 //      if (CoreWorkerProcess::IsInitialized()) {
@@ -359,20 +357,20 @@ namespace mcs {
 //    }
 //
     std::string AbstractMcsRuntime::SerializeActorHandle(const std::string &actor_id) {
-//      auto &core_worker = CoreWorkerProcess::GetCoreWorker();
-//      std::string output;
-//      ObjectID actor_handle_id;
-//      auto status = core_worker.SerializeActorHandle(
-//              ActorID::FromBinary(actor_id), &output, &actor_handle_id);
-//      return output;
-//    }
-//
-//    std::string AbstractMcsRuntime::DeserializeAndRegisterActorHandle(
-//            const std::string &serialized_actor_handle) {
-//      auto &core_worker = CoreWorkerProcess::GetCoreWorker();
-//      return core_worker
-//              .DeserializeAndRegisterActorHandle(serialized_actor_handle, ObjectID::Nil())
-//              .Binary();
+    //  auto &core_worker = CoreWorkerProcess::GetCoreWorker();
+     std::string output;
+    //  ObjectID actor_handle_id;
+    //  auto status = core_worker.SerializeActorHandle(
+    //          ActorID::FromBinary(actor_id), &output, &actor_handle_id);
+     return output;
+   }
+
+   std::string AbstractMcsRuntime::DeserializeAndRegisterActorHandle(
+           const std::string &serialized_actor_handle) {
+    //  auto &core_worker = CoreWorkerProcess::GetCoreWorker();
+    //  return core_worker
+    //          .DeserializeAndRegisterActorHandle(serialized_actor_handle, ObjectID::Nil())
+    //          .Binary();
       return "";
     }
 

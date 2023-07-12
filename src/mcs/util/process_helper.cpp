@@ -9,7 +9,7 @@
 
 namespace mcs {
   namespace internal {
-    using mcs::core::WorkerType;
+    // using mcs::core::WorkerType;
 
     void ProcessHelper::StartMcsNode(const int port,
                                      const std::vector <std::string> &head_args) {
@@ -36,18 +36,19 @@ namespace mcs {
     }
 
     void ProcessHelper::McsStart(CoreWorkerOptions::TaskExecutionCallback callback) {
-      std::string bootstrap_ip = ConfigInternal::Instance().bootstrap_ip;
-      int bootstrap_port = ConfigInternal::Instance().bootstrap_port;
+//       std::string bootstrap_ip = ConfigInternal::Instance().bootstrap_ip;
+//       int bootstrap_port = ConfigInternal::Instance().bootstrap_port;
 
-      if (ConfigInternal::Instance().worker_type == WorkerType::DRIVER &&
-          bootstrap_ip.empty()) {
-        bootstrap_ip = "127.0.0.1";
-        StartMcsNode(bootstrap_port,
-                     ConfigInternal::Instance().head_args);
-      }
-      if (bootstrap_ip == "127.0.0.1") {
-//        bootstrap_ip = GetNodeIpAddress();
-      }
+//       if (ConfigInternal::Instance().worker_type == WorkerType::DRIVER &&
+//           bootstrap_ip.empty()) {
+//         bootstrap_ip = "127.0.0.1";
+//         StartMcsNode(bootstrap_port,
+//                      ConfigInternal::Instance().head_args);
+//       }
+//       if (bootstrap_ip == "127.0.0.1") {
+// //        bootstrap_ip = GetNodeIpAddress();
+//       }
+
 //
 //  std::string bootstrap_address = bootstrap_ip + ":" + std::to_string(bootstrap_port);
 //  std::string node_ip = ConfigInternal::Instance().node_ip_address;

@@ -43,11 +43,11 @@ namespace mcs {
 
     class McsRuntime {
     public:
-      virtual std::string Put(std::shared_ptr<msgpack::sbuffer> data) = 0;
+      // virtual std::string Put(std::shared_ptr<msgpack::sbuffer> data) = 0;
       virtual std::shared_ptr<msgpack::sbuffer> Get(const std::string &id) = 0;
 
-      virtual std::vector<std::shared_ptr<msgpack::sbuffer>> Get(
-              const std::vector<std::string> &ids) = 0;
+      // virtual std::vector<std::shared_ptr<msgpack::sbuffer>> Get(
+      //         const std::vector<std::string> &ids) = 0;
 
 //      virtual std::vector<bool> Wait(const std::vector<std::string> &ids,
 //                                     int num_objects,
@@ -81,8 +81,8 @@ namespace mcs {
       virtual bool IsLocalMode() { return false; }
 //      virtual std::string GetNamespace() = 0;
       virtual std::string SerializeActorHandle(const std::string &actor_id) = 0;
-//      virtual std::string DeserializeAndRegisterActorHandle(
-//              const std::string &serialized_actor_handle) = 0;
+    //  virtual std::string DeserializeAndRegisterActorHandle(
+    //          const std::string &serialized_actor_handle) = 0;
     };
   } //namespace internal
 } //namespace mcs

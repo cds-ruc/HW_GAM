@@ -1,13 +1,9 @@
-//
-// Created by hrh on 1/4/23.
-//
-
 #pragma once
 
 #include <mcs/api/function_manager.h>
 #include <mcs/api/task_caller.h>
-#include <mcs/api/object_ref.h>
-#include "mcs/api/mcs_remote.h"
+// #include <mcs/api/object_ref.h>
+#include <mcs/api/mcs_remote.h>
 #include "mcs_config.h"
 #include <mcs/util/logging.h>
 
@@ -32,7 +28,8 @@ namespace mcs {
 
   template <typename T>
   inline std::shared_ptr<T> Get(const mcs::ObjectRef<T> &object) {
-    return GetFromRuntime(object);
+    return internal::GetMcsRuntime()->Get(object.ID());
+    // return GetFromRuntime(object);
   }
 
   /// 创建一个回调任务用来执行远程函数
@@ -47,9 +44,6 @@ namespace mcs {
   /// Normal task.
   template <typename F>
   inline mcs::internal::TaskCaller<F> Task(F func) {
-    static_assert(!mcs::internal::is_python_v<F>, "Must be a cpp function.");
-    static_assert(!std::is_member_function_pointer_v<F>,
-                  "Incompatible type: member function cannot be called with mcs::Task.");
     auto func_name = internal::FunctionManager::Instance().GetFunctionName(func);
     mcs::internal::RemoteFunctionHolder remote_func_holder(std::move(func_name));
     return mcs::internal::TaskCaller<F>(mcs::internal::GetMcsRuntime().get(),
