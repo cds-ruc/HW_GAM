@@ -13,6 +13,7 @@ find_package(Gflags REQUIRED)
 set(MSGPACK_DIR ${PROJECT_SOURCE_DIR}/../thrid/msgpack-c/include)
 set(SPDLOG_DIR ${PROJECT_SOURCE_DIR}/../thrid/spdlog/include)
 set(INC ${PROJECT_SOURCE_DIR})
+set(GAM ${PROJECT_SOURCE_DIR}/../gam/include  ${PROJECT_SOURCE_DIR}/../gam/lib/libcuckoo/cityhash-1.1.1/src ${PROJECT_SOURCE_DIR}/../gam/lib/libcuckoo/src)
 
 include(FetchContent)
 set(FETCHCONTENT_QUIET false)
@@ -35,6 +36,7 @@ include_directories(${INC}
         ${CEX_DIR}
         ${Boost_INCLUDE_DIR}
         ${PHOTON_INCLUDE_DIR}
+        ${GAM}
         /usr/local/include  /user/include SYSTEM
         )
 link_directories(/usr/local/lib /usr/lib)
@@ -56,12 +58,14 @@ set(LIBRARIES dl nlohmann_json::nlohmann_json)
 set(BOOST boost_filesystem boost_system boost_thread pthread)
 set(ABSL absl)
 set(Photon photon_static gflags)
-# set(ABSL absl::base absl::synchronization absl::strings absl::flat_hash_map absl::flat_hash_set absl::random_random absl::time)
-# set(GRPC gRPC::grpc++_reflection protobuf::libprotobuf)
+
+
+#${PROJECT_SOURCE_DIR}/../gam/lib/libcuckoo/cityhash-1.1.1/src/.libs/libcityhash.a
+set(GAM ${PROJECT_SOURCE_DIR}/../thrid/libgalloc.a )
 
 # 生成可执行文件
 add_executable(${PROJECT_NAME} ${ALL_SRC})
-target_link_libraries(${PROJECT_NAME} ${LIBRARIES} ${ABSL} ${BOOST} ${GRPC} ${Photon})
+target_link_libraries(${PROJECT_NAME} ${LIBRARIES} ${ABSL} ${BOOST} ${GRPC} ${Photon} ${GAM})
 
 # 链接操作
 
